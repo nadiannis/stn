@@ -15,6 +15,7 @@ func (app *application) routes() http.Handler {
 	mux.HandleFunc("/", app.home)
 	mux.HandleFunc("/links/list", app.linkList)
 	mux.HandleFunc("/links/create", app.linkCreate)
+	mux.HandleFunc("/users/signup", app.userSignup)
 
 	return app.requestLogger(mux)
 }

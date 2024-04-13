@@ -43,3 +43,17 @@ func (app *application) linkCreate(w http.ResponseWriter, r *http.Request) {
 		app.clientError(w, http.StatusMethodNotAllowed)
 	}
 }
+
+func (app *application) userSignup(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		app.render(w, http.StatusOK, "signup.tmpl.html", nil)
+	case http.MethodPost:
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("Create user account"))
+	default:
+		allowedMethods := fmt.Sprintf("%s, %s", http.MethodGet, http.MethodPost)
+		w.Header().Set("Allow", allowedMethods)
+		app.clientError(w, http.StatusMethodNotAllowed)
+	}
+}
