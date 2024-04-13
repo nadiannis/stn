@@ -1,20 +1,18 @@
-{{define "title"}}Sign Up{{end}}
+{{define "title"}}Login{{end}}
 
 {{define "main"}}
 <section class="auth">
   <div class="container">
     <aside>
-      <span class="side-text">
-        Start to manage your links in one place
-      </span>
+      <span class="side-text">Welcome back!</span>
     </aside>
     <div class="auth-content">
-      <h2>Sign Up</h2>
+      <h2>Login</h2>
       <p>
-        Already have an account?
-        <a href="/users/login">Login</a>
+        Don’t have an account?
+        <a href="/users/signup">Sign up</a>
       </p>
-      <form method="POST" action="/users/signup" novalidate>
+      <form method="POST" action="/users/login" novalidate>
         <div class="form-field">
           <label for="email">Email</label>
           <input
@@ -30,9 +28,7 @@
           <input type="password" name="password" id="password" />
           <span class="error">Error</span>
         </div>
-        <button type="submit" class="btn btn-solid-primary">
-          Create account
-        </button>
+        <button type="submit" class="btn btn-solid-primary">Login</button>
       </form>
     </div>
   </div>

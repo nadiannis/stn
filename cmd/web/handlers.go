@@ -57,3 +57,17 @@ func (app *application) userSignup(w http.ResponseWriter, r *http.Request) {
 		app.clientError(w, http.StatusMethodNotAllowed)
 	}
 }
+
+func (app *application) userLogin(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		app.render(w, http.StatusOK, "login.tmpl.html", nil)
+	case http.MethodPost:
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("Login"))
+	default:
+		allowedMethods := fmt.Sprintf("%s, %s", http.MethodGet, http.MethodPost)
+		w.Header().Set("Allow", allowedMethods)
+		app.clientError(w, http.StatusMethodNotAllowed)
+	}
+}
