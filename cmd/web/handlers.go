@@ -17,7 +17,7 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	app.render(w, http.StatusOK, "home", nil)
+	app.render(w, http.StatusOK, "home.tmpl.html", nil)
 }
 
 func (app *application) linkList(w http.ResponseWriter, r *http.Request) {
@@ -27,13 +27,13 @@ func (app *application) linkList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	app.render(w, http.StatusOK, "link-list", nil)
+	app.render(w, http.StatusOK, "link-list.tmpl.html", nil)
 }
 
 func (app *application) linkCreate(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
-		app.render(w, http.StatusOK, "link-create", nil)
+		app.render(w, http.StatusOK, "link-create.tmpl.html", nil)
 	case http.MethodPost:
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("Create short link"))
