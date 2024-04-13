@@ -1,0 +1,65 @@
+{{define "title"}}Edit Link{{end}}
+
+{{define "main"}}
+<section class="link-create-edit">
+  <div class="container">
+    <div class="link-create-edit-content">
+      <h2>Edit a link</h2>
+      <p>Modify the link you created.</p>
+      <form method="POST" action="/links/1/edit" novalidate>
+        <div class="form-field">
+          <label for="long-link">Long link</label>
+          <input
+            type="text"
+            name="long-link"
+            id="long-link"
+            placeholder="https://super-long-link.com/please-shorten-it"
+          />
+          <span class="error">Error</span>
+        </div>
+        <div class="form-two-columns">
+          <div class="form-field">
+            <label for="domain">Domain</label>
+            <input
+              type="text"
+              name="domain"
+              id="domain"
+              value="stn.nadiannis.com"
+              disabled
+            />
+            <span class="error">Error</span>
+          </div>
+          <div class="form-field">
+            <label for="back-half">
+              Custom back-half
+              <span class="label-note">(optional)</span>
+            </label>
+            <input type="text" name="back-half" id="back-half" />
+            <span class="error">Error</span>
+          </div>
+        </div>
+        <div class="buttons">
+          <a href="/links" class="btn btn-solid-light">
+            Cancel
+          </a>
+          <button type="submit" class="btn btn-solid-primary">
+            Save
+          </button>
+        </div>
+      </form>
+    </div>
+    <aside>
+      <div class="side-info">
+        <div class="side-info-item">
+          Total Links
+          <span class="side-info-value">5 short links</span>
+        </div>
+        <div class="side-info-item">
+          Total Engagements
+          <span class="side-info-value">58 clicks</span>
+        </div>
+      </div>
+    </aside>
+  </div>
+</section>
+{{end}}

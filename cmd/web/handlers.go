@@ -28,6 +28,12 @@ func (app *application) linkDetailView(w http.ResponseWriter, r *http.Request) {
 	app.render(w, http.StatusOK, "link-detail.tmpl.html", nil)
 }
 
+func (app *application) linkEditView(w http.ResponseWriter, r *http.Request) {
+	id := r.PathValue("id")
+	fmt.Println("Link ID:", id)
+	app.render(w, http.StatusOK, "link-edit.tmpl.html", nil)
+}
+
 func (app *application) signupView(w http.ResponseWriter, r *http.Request) {
 	app.render(w, http.StatusOK, "signup.tmpl.html", nil)
 }
