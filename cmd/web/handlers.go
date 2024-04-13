@@ -10,13 +10,13 @@ import (
 
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
-		http.NotFound(w, r)
+		app.notFound(w)
 		return
 	}
 
 	if r.Method != http.MethodGet {
 		w.Header().Set("Allow", http.MethodGet)
-		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		app.clientError(w, http.StatusMethodNotAllowed)
 		return
 	}
 
@@ -28,16 +28,14 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	}
 	ts, err := template.ParseFS(ui.Files, files...)
 	if err != nil {
-		app.errorLog.Println(err.Error())
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		app.serverError(w, err)
 		return
 	}
 
 	w.WriteHeader(http.StatusOK)
 	err = ts.ExecuteTemplate(w, "base", nil)
 	if err != nil {
-		app.errorLog.Println(err.Error())
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		app.serverError(w, err)
 		return
 	}
 }
@@ -45,7 +43,7 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 func (app *application) linkList(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		w.Header().Set("Allow", http.MethodGet)
-		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		app.clientError(w, http.StatusMethodNotAllowed)
 		return
 	}
 
@@ -57,16 +55,14 @@ func (app *application) linkList(w http.ResponseWriter, r *http.Request) {
 	}
 	ts, err := template.ParseFS(ui.Files, files...)
 	if err != nil {
-		app.errorLog.Println(err.Error())
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		app.serverError(w, err)
 		return
 	}
 
 	w.WriteHeader(http.StatusOK)
 	err = ts.ExecuteTemplate(w, "base", nil)
 	if err != nil {
-		app.errorLog.Println(err.Error())
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		app.serverError(w, err)
 		return
 	}
 }
@@ -82,16 +78,14 @@ func (app *application) linkCreate(w http.ResponseWriter, r *http.Request) {
 		}
 		ts, err := template.ParseFS(ui.Files, files...)
 		if err != nil {
-			app.errorLog.Println(err.Error())
-			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			app.serverError(w, err)
 			return
 		}
 
 		w.WriteHeader(http.StatusOK)
 		err = ts.ExecuteTemplate(w, "base", nil)
 		if err != nil {
-			app.errorLog.Println(err.Error())
-			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			app.serverError(w, err)
 			return
 		}
 	case http.MethodPost:
@@ -100,6 +94,6 @@ func (app *application) linkCreate(w http.ResponseWriter, r *http.Request) {
 	default:
 		allowedMethods := fmt.Sprintf("%s, %s", http.MethodGet, http.MethodPost)
 		w.Header().Set("Allow", allowedMethods)
-		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		app.clientError(w, http.StatusMethodNotAllowed)
 	}
 }
