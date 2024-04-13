@@ -56,8 +56,26 @@ func (app *application) linkList(w http.ResponseWriter, r *http.Request) {
 func (app *application) linkCreate(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
+		files := []string{
+			"html/base.tmpl.html",
+			"html/partials/header.tmpl.html",
+			"html/partials/footer.tmpl.html",
+			"html/pages/link-create.tmpl.html",
+		}
+		ts, err := template.ParseFS(ui.Files, files...)
+		if err != nil {
+			app.errorLog.Println(err.Error())
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
+
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("View create short link page"))
+		err = ts.ExecuteTemplate(w, "base", nil)
+		if err != nil {
+			app.errorLog.Println(err.Error())
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
 	case http.MethodPost:
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("Create short link"))
