@@ -1,0 +1,30 @@
+{{define "title"}}Home{{end}} 
+
+{{define "main"}}
+<section class="hero">
+  <div class="container">
+    <div class="hero-content">
+      <div class="hero-text">
+        <h2>No more<br />super long links</h2>
+        <p>
+          Turn long links into readable links that you can easily manage in one
+          place
+        </p>
+        <div class="hero-cta">
+          <form method="POST" action="/links/create">
+            <input
+              type="text"
+              placeholder="https://super-long-link.com/please-shorten-it"
+            />
+            <button type="submit" class="btn btn-solid-primary">Shorten</button>
+          </form>
+          <span><a href="/users/login">Login</a>to unlock all features</span>
+        </div>
+      </div>
+      <div class="hero-img">
+        <img src="/static/img/hero-img.svg" alt="Hero image" />
+      </div>
+    </div>
+  </div>
+</section>
+{{end}}

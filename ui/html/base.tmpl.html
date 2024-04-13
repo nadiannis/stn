@@ -1,0 +1,23 @@
+{{define "base"}}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{template "title" .}} | Stn</title>
+    <link rel="stylesheet" href="/static/css/main.css" />
+  </head>
+  <body>
+    {{template "header" .}}
+    <main>
+      {{template "main" .}}
+    </main>
+    {{template "footer" .}}
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+      lucide.createIcons();
+    </script>
+  </body>
+</html>
+{{end}}

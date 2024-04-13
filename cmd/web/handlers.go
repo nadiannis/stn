@@ -3,6 +3,9 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"text/template"
+
+	"github.com/nadiannis/stn/ui"
 )
 
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
@@ -17,8 +20,26 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	files := []string{
+		"html/base.tmpl.html",
+		"html/partials/header.tmpl.html",
+		"html/partials/footer.tmpl.html",
+		"html/pages/home.tmpl.html",
+	}
+	ts, err := template.ParseFS(ui.Files, files...)
+	if err != nil {
+		app.errorLog.Println(err.Error())
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("Home"))
+	err = ts.ExecuteTemplate(w, "base", nil)
+	if err != nil {
+		app.errorLog.Println(err.Error())
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
 }
 
 func (app *application) linkList(w http.ResponseWriter, r *http.Request) {
