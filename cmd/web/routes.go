@@ -20,5 +20,5 @@ func (app *application) routes() http.Handler {
 	mux.HandleFunc("GET /users/signup", app.signupView)
 	mux.HandleFunc("GET /users/login", app.loginView)
 
-	return app.requestLogger(mux)
+	return app.requestLogger(secureHeaders(mux))
 }
