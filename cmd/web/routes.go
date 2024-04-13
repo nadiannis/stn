@@ -10,13 +10,13 @@ func (app *application) routes() http.Handler {
 	mux := http.NewServeMux()
 
 	fileServer := http.FileServer(http.FS(ui.Files))
-	mux.Handle("/static/", fileServer)
+	mux.Handle("GET /static/", fileServer)
 
-	mux.HandleFunc("/", app.home)
-	mux.HandleFunc("/links/list", app.linkList)
-	mux.HandleFunc("/links/create", app.linkCreate)
-	mux.HandleFunc("/users/signup", app.userSignup)
-	mux.HandleFunc("/users/login", app.userLogin)
+	mux.HandleFunc("GET /", app.homeView)
+	mux.HandleFunc("GET /links/list", app.linkListView)
+	mux.HandleFunc("GET /links/create", app.linkCreateView)
+	mux.HandleFunc("GET /users/signup", app.signupView)
+	mux.HandleFunc("GET /users/login", app.loginView)
 
 	return app.requestLogger(mux)
 }
