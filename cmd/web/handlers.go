@@ -3,9 +3,6 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"text/template"
-
-	"github.com/nadiannis/stn/ui"
 )
 
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
@@ -20,24 +17,7 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	files := []string{
-		"html/base.tmpl.html",
-		"html/partials/header.tmpl.html",
-		"html/partials/footer.tmpl.html",
-		"html/pages/home.tmpl.html",
-	}
-	ts, err := template.ParseFS(ui.Files, files...)
-	if err != nil {
-		app.serverError(w, err)
-		return
-	}
-
-	w.WriteHeader(http.StatusOK)
-	err = ts.ExecuteTemplate(w, "base", nil)
-	if err != nil {
-		app.serverError(w, err)
-		return
-	}
+	app.render(w, http.StatusOK, "home", nil)
 }
 
 func (app *application) linkList(w http.ResponseWriter, r *http.Request) {
@@ -47,47 +27,13 @@ func (app *application) linkList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	files := []string{
-		"html/base.tmpl.html",
-		"html/partials/header.tmpl.html",
-		"html/partials/footer.tmpl.html",
-		"html/pages/link-list.tmpl.html",
-	}
-	ts, err := template.ParseFS(ui.Files, files...)
-	if err != nil {
-		app.serverError(w, err)
-		return
-	}
-
-	w.WriteHeader(http.StatusOK)
-	err = ts.ExecuteTemplate(w, "base", nil)
-	if err != nil {
-		app.serverError(w, err)
-		return
-	}
+	app.render(w, http.StatusOK, "link-list", nil)
 }
 
 func (app *application) linkCreate(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
-		files := []string{
-			"html/base.tmpl.html",
-			"html/partials/header.tmpl.html",
-			"html/partials/footer.tmpl.html",
-			"html/pages/link-create.tmpl.html",
-		}
-		ts, err := template.ParseFS(ui.Files, files...)
-		if err != nil {
-			app.serverError(w, err)
-			return
-		}
-
-		w.WriteHeader(http.StatusOK)
-		err = ts.ExecuteTemplate(w, "base", nil)
-		if err != nil {
-			app.serverError(w, err)
-			return
-		}
+		app.render(w, http.StatusOK, "link-create", nil)
 	case http.MethodPost:
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("Create short link"))
