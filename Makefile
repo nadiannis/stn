@@ -6,3 +6,14 @@ help:
 ## run/web: run the cmd/web application 
 run/web:
 	go run ./cmd/web
+
+## audit: tidy dependencies, format code, & vet code
+audit:
+	@echo 'Tidying & verifying module dependencies...'
+	go mod tidy
+	go mod verify
+	@echo 'Formatting code...'
+	go fmt ./...
+	@echo 'Vetting code...'
+	go vet ./...
+	staticcheck ./...
