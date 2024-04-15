@@ -1,3 +1,5 @@
+include .env
+
 ## help: list available commands
 .PHONY: help
 help:
@@ -7,7 +9,7 @@ help:
 ## run/web: run the cmd/web application 
 .PHONY: run/web
 run/web:
-	go run ./cmd/web
+	go run ./cmd/web -db-dsn=${DB_DSN}
 
 ## audit: tidy dependencies, format code, & vet code
 .PHONY: audit
