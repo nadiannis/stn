@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -15,7 +16,7 @@ type application struct {
 }
 
 func main() {
-	addr := flag.String("addr", ":8080", "HTTP network address")
+	port := flag.Int("port", 8080, "Web server port")
 	flag.Parse()
 
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
@@ -33,11 +34,11 @@ func main() {
 	}
 
 	srv := &http.Server{
-		Addr:     *addr,
+		Addr:     fmt.Sprintf(":%d", *port),
 		ErrorLog: errorLog,
 		Handler:  app.routes(),
 	}
 
-	infoLog.Printf("Starting server on %s", *addr)
+	infoLog.Printf("Starting server on :%d", *port)
 	errorLog.Fatal(srv.ListenAndServe())
 }
