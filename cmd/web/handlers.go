@@ -12,9 +12,17 @@ import (
 )
 
 type signupForm struct {
-	Email       string
-	Password    string
-	FieldErrors map[string]string
+	Email          string
+	Password       string
+	FieldErrors    map[string]string
+	NonFieldErrors []string
+}
+
+type loginForm struct {
+	Email          string
+	Password       string
+	FieldErrors    map[string]string
+	NonFieldErrors []string
 }
 
 func (app *application) homeView(w http.ResponseWriter, r *http.Request) {
@@ -102,5 +110,61 @@ func (app *application) signup(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) loginView(w http.ResponseWriter, r *http.Request) {
-	app.render(w, http.StatusOK, "login.tmpl.html", nil)
+	data := newTemplateData()
+	data.Form = loginForm{}
+	app.render(w, http.StatusOK, "login.tmpl.html", data)
+}
+
+func (app *application) login(w http.ResponseWriter, r *http.Request) {
+	formValues, err := decodePostForm(r)
+	if err != nil {
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
+
+	form := loginForm{
+		Email:       formValues.Get("email"),
+		Password:    formValues.Get("password"),
+		FieldErrors: make(map[string]string),
+	}
+
+	if strings.TrimSpace(form.Email) == "" {
+		form.FieldErrors["email"] = "Email is required"
+	} else if !validator.EmailRX.MatchString(form.Email) {
+		form.FieldErrors["email"] = "Email is not valid"
+	}
+
+	if strings.TrimSpace(form.Password) == "" {
+		form.FieldErrors["password"] = "Password is required"
+	}
+
+	if len(form.FieldErrors) != 0 {
+		data := newTemplateData()
+		data.Form = form
+		app.render(w, http.StatusUnprocessableEntity, "login.tmpl.html", data)
+		return
+	}
+
+	id, err := app.users.Authenticate(form.Email, form.Password)
+	if err != nil {
+		if errors.Is(err, models.ErrInvalidCredentials) {
+			form.NonFieldErrors = append(form.NonFieldErrors, "Email or password is incorrect")
+
+			data := newTemplateData()
+			data.Form = form
+			app.render(w, http.StatusUnprocessableEntity, "login.tmpl.html", data)
+		} else {
+			app.serverError(w, err)
+		}
+		return
+	}
+
+	err = app.sessionManager.RenewToken(r.Context())
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+	app.sessionManager.Put(r.Context(), "authenticatedUserID", id.String())
+
+	http.Redirect(w, r, "/links/list", http.StatusSeeOther)
 }

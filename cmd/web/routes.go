@@ -12,14 +12,15 @@ func (app *application) routes() http.Handler {
 	fileServer := http.FileServer(http.FS(ui.Files))
 	mux.Handle("GET /static/", fileServer)
 
-	mux.HandleFunc("GET /", app.homeView)
-	mux.HandleFunc("GET /links/list", app.linkListView)
-	mux.HandleFunc("GET /links/create", app.linkCreateView)
-	mux.HandleFunc("GET /links/{id}", app.linkDetailView)
-	mux.HandleFunc("GET /links/{id}/edit", app.linkEditView)
-	mux.HandleFunc("GET /users/signup", app.signupView)
-	mux.HandleFunc("POST /users/signup", app.signup)
-	mux.HandleFunc("GET /users/login", app.loginView)
+	mux.Handle("GET /", app.sessionManager.LoadAndSave(http.HandlerFunc(app.homeView)))
+	mux.Handle("GET /links/list", app.sessionManager.LoadAndSave(http.HandlerFunc(app.linkListView)))
+	mux.Handle("GET /links/create", app.sessionManager.LoadAndSave(http.HandlerFunc(app.linkCreateView)))
+	mux.Handle("GET /links/{id}", app.sessionManager.LoadAndSave(http.HandlerFunc(app.linkDetailView)))
+	mux.Handle("GET /links/{id}/edit", app.sessionManager.LoadAndSave(http.HandlerFunc(app.linkEditView)))
+	mux.Handle("GET /users/signup", app.sessionManager.LoadAndSave(http.HandlerFunc(app.signupView)))
+	mux.Handle("POST /users/signup", app.sessionManager.LoadAndSave(http.HandlerFunc(app.signup)))
+	mux.Handle("GET /users/login", app.sessionManager.LoadAndSave(http.HandlerFunc(app.loginView)))
+	mux.Handle("POST /users/login", app.sessionManager.LoadAndSave(http.HandlerFunc(app.login)))
 
 	return app.requestLogger(secureHeaders(mux))
 }

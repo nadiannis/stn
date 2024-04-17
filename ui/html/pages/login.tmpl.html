@@ -12,6 +12,13 @@
         Don’t have an account?
         <a href="/users/signup">Sign up</a>
       </p>
+      {{if .Form.NonFieldErrors}}
+        <div class="non-field-errors">
+          {{range .Form.NonFieldErrors}}
+            <div class="error">{{.}}</div>
+          {{end}}
+        </div>
+      {{end}}
       <form method="POST" action="/users/login" novalidate>
         <div class="form-field">
           <label for="email">Email</label>
@@ -20,13 +27,18 @@
             name="email"
             id="email"
             placeholder="email@example.com"
+            value="{{.Form.Email}}"
           />
-          <span class="error">Error</span>
+          {{with .Form.FieldErrors.email}}
+            <span class="error">{{.}}</span>
+          {{end}}
         </div>
         <div class="form-field">
           <label for="password">Password</label>
           <input type="password" name="password" id="password" />
-          <span class="error">Error</span>
+          {{with .Form.FieldErrors.password}}
+            <span class="error">{{.}}</span>
+          {{end}}
         </div>
         <button type="submit" class="btn btn-solid-primary">Login</button>
       </form>

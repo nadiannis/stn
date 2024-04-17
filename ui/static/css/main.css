@@ -533,10 +533,20 @@ footer {
   width: 100%;
 }
 
-.form-field .error {
+.error {
   color: var(--color-accent);
   font-weight: 800;
   font-size: 0.875rem;
+}
+
+.non-field-errors {
+  margin: 1.2rem 0 -1rem 0rem;
+  padding: 1rem 1.5rem;
+  background: #eaeff7;
+  border-radius: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .user-info {
