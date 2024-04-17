@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"net/http"
+	"net/url"
 	"runtime/debug"
 )
 
@@ -38,4 +39,17 @@ func (app *application) render(w http.ResponseWriter, status int, page string, d
 
 	w.WriteHeader(status)
 	buf.WriteTo(w)
+}
+
+func decodePostForm(r *http.Request) (url.Values, error) {
+	err := r.ParseForm()
+	if err != nil {
+		return nil, err
+	}
+
+	return r.PostForm, nil
+}
+
+func newTemplateData() *templateData {
+	return &templateData{}
 }

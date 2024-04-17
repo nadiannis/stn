@@ -22,13 +22,18 @@
             name="email"
             id="email"
             placeholder="email@example.com"
+            value="{{.Form.Email}}"
           />
-          <span class="error">Error</span>
+          {{with .Form.FieldErrors.email}}
+            <span class="error">{{.}}</span>
+          {{end}}
         </div>
         <div class="form-field">
           <label for="password">Password</label>
           <input type="password" name="password" id="password" />
-          <span class="error">Error</span>
+          {{with .Form.FieldErrors.password}}
+            <span class="error">{{.}}</span>
+          {{end}}
         </div>
         <button type="submit" class="btn btn-solid-primary">
           Create account

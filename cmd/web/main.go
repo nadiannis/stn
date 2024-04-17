@@ -10,12 +10,14 @@ import (
 	"text/template"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/nadiannis/stn/internal/models"
 )
 
 type application struct {
 	infoLog       *log.Logger
 	errorLog      *log.Logger
 	templateCache map[string]*template.Template
+	users         *models.UserModel
 }
 
 func main() {
@@ -41,6 +43,7 @@ func main() {
 		infoLog:       infoLog,
 		errorLog:      errorLog,
 		templateCache: templateCache,
+		users:         &models.UserModel{DB: db},
 	}
 
 	srv := &http.Server{
