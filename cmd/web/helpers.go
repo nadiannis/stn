@@ -53,3 +53,12 @@ func decodePostForm(r *http.Request) (url.Values, error) {
 func newTemplateData() *templateData {
 	return &templateData{}
 }
+
+func (app *application) isAuthenticated(r *http.Request) bool {
+	isAuthenticated, ok := r.Context().Value(isAuthenticatedCtxKey).(bool)
+	if !ok {
+		return false
+	}
+
+	return isAuthenticated
+}
