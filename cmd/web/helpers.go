@@ -73,7 +73,6 @@ func (app *application) isAuthenticated(r *http.Request) bool {
 
 func (app *application) getAuthenticatedUser(r *http.Request) *AuthenticatedUser {
 	authenticatedUser, ok := app.sessionManager.Get(r.Context(), "authenticatedUser").(AuthenticatedUser)
-	fmt.Println("authenticatedUser (helper):", authenticatedUser)
 	if !ok {
 		return nil
 	}
