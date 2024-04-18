@@ -8,6 +8,11 @@ import (
 	"runtime/debug"
 )
 
+type AuthenticatedUser struct {
+	ID    string
+	Email string
+}
+
 func (app *application) serverError(w http.ResponseWriter, err error) {
 	trace := fmt.Sprintf("%s\n%s", err.Error(), debug.Stack())
 	app.errorLog.Output(2, trace)
@@ -50,8 +55,11 @@ func decodePostForm(r *http.Request) (url.Values, error) {
 	return r.PostForm, nil
 }
 
-func newTemplateData() *templateData {
-	return &templateData{}
+func (app *application) newTemplateData(r *http.Request) *templateData {
+	return &templateData{
+		IsAuthenticated:   app.isAuthenticated(r),
+		AuthenticatedUser: app.getAuthenticatedUser(r),
+	}
 }
 
 func (app *application) isAuthenticated(r *http.Request) bool {
@@ -61,4 +69,14 @@ func (app *application) isAuthenticated(r *http.Request) bool {
 	}
 
 	return isAuthenticated
+}
+
+func (app *application) getAuthenticatedUser(r *http.Request) *AuthenticatedUser {
+	authenticatedUser, ok := app.sessionManager.Get(r.Context(), "authenticatedUser").(AuthenticatedUser)
+	fmt.Println("authenticatedUser (helper):", authenticatedUser)
+	if !ok {
+		return nil
+	}
+
+	return &authenticatedUser
 }

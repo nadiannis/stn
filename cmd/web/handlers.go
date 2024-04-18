@@ -31,31 +31,36 @@ func (app *application) homeView(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	app.render(w, http.StatusOK, "home.tmpl.html", nil)
+	data := app.newTemplateData(r)
+	app.render(w, http.StatusOK, "home.tmpl.html", data)
 }
 
 func (app *application) linkListView(w http.ResponseWriter, r *http.Request) {
-	app.render(w, http.StatusOK, "link-list.tmpl.html", nil)
+	data := app.newTemplateData(r)
+	app.render(w, http.StatusOK, "link-list.tmpl.html", data)
 }
 
 func (app *application) linkCreateView(w http.ResponseWriter, r *http.Request) {
-	app.render(w, http.StatusOK, "link-create.tmpl.html", nil)
+	data := app.newTemplateData(r)
+	app.render(w, http.StatusOK, "link-create.tmpl.html", data)
 }
 
 func (app *application) linkDetailView(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 	fmt.Println("Link ID:", id)
-	app.render(w, http.StatusOK, "link-detail.tmpl.html", nil)
+	data := app.newTemplateData(r)
+	app.render(w, http.StatusOK, "link-detail.tmpl.html", data)
 }
 
 func (app *application) linkEditView(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 	fmt.Println("Link ID:", id)
-	app.render(w, http.StatusOK, "link-edit.tmpl.html", nil)
+	data := app.newTemplateData(r)
+	app.render(w, http.StatusOK, "link-edit.tmpl.html", data)
 }
 
 func (app *application) signupView(w http.ResponseWriter, r *http.Request) {
-	data := newTemplateData()
+	data := app.newTemplateData(r)
 	data.Form = signupForm{}
 	app.render(w, http.StatusOK, "signup.tmpl.html", data)
 }
@@ -86,7 +91,7 @@ func (app *application) signup(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if len(form.FieldErrors) != 0 {
-		data := newTemplateData()
+		data := app.newTemplateData(r)
 		data.Form = form
 		app.render(w, http.StatusUnprocessableEntity, "signup.tmpl.html", data)
 		return
@@ -97,7 +102,7 @@ func (app *application) signup(w http.ResponseWriter, r *http.Request) {
 		if errors.Is(err, models.ErrDuplicateEmail) {
 			form.FieldErrors["email"] = "Email is already in use"
 
-			data := newTemplateData()
+			data := app.newTemplateData(r)
 			data.Form = form
 			app.render(w, http.StatusUnprocessableEntity, "signup.tmpl.html", data)
 		} else {
@@ -110,7 +115,7 @@ func (app *application) signup(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) loginView(w http.ResponseWriter, r *http.Request) {
-	data := newTemplateData()
+	data := app.newTemplateData(r)
 	data.Form = loginForm{}
 	app.render(w, http.StatusOK, "login.tmpl.html", data)
 }
@@ -139,18 +144,18 @@ func (app *application) login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if len(form.FieldErrors) != 0 {
-		data := newTemplateData()
+		data := app.newTemplateData(r)
 		data.Form = form
 		app.render(w, http.StatusUnprocessableEntity, "login.tmpl.html", data)
 		return
 	}
 
-	id, err := app.users.Authenticate(form.Email, form.Password)
+	user, err := app.users.Authenticate(form.Email, form.Password)
 	if err != nil {
 		if errors.Is(err, models.ErrInvalidCredentials) {
 			form.NonFieldErrors = append(form.NonFieldErrors, "Email or password is incorrect")
 
-			data := newTemplateData()
+			data := app.newTemplateData(r)
 			data.Form = form
 			app.render(w, http.StatusUnprocessableEntity, "login.tmpl.html", data)
 		} else {
@@ -164,7 +169,10 @@ func (app *application) login(w http.ResponseWriter, r *http.Request) {
 		app.serverError(w, err)
 		return
 	}
-	app.sessionManager.Put(r.Context(), "authenticatedUserID", id.String())
+	app.sessionManager.Put(r.Context(), "authenticatedUser", AuthenticatedUser{
+		ID:    user.ID.String(),
+		Email: user.Email,
+	})
 
 	http.Redirect(w, r, "/links/list", http.StatusSeeOther)
 }

@@ -27,13 +27,13 @@ func secureHeaders(next http.Handler) http.Handler {
 
 func (app *application) authenticate(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		id := app.sessionManager.GetString(r.Context(), "authenticatedUserID")
-		if id == "" {
+		user := app.getAuthenticatedUser(r)
+		if user == nil {
 			next.ServeHTTP(w, r)
 			return
 		}
 
-		exists, err := app.users.Exists(id)
+		exists, err := app.users.Exists(user.ID)
 		if err != nil {
 			app.serverError(w, err)
 			return

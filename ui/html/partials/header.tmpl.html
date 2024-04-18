@@ -6,16 +6,30 @@
       <div class="menu">
         <nav class="left-menu">
           <ul>
-            <li>
-              <a href="/">
-                <i data-lucide="home" class="icon-16px"></i>Home
-              </a>
-            </li>
+            {{if not .IsAuthenticated}}
+              <li>
+                <a href="/">
+                  <i data-lucide="home" class="icon-16px"></i>Home
+                </a>
+              </li>
+            {{end}}
           </ul>
         </nav>
         <div class="right-menu">
-          <a href="/users/login" class="btn btn-solid-secondary">Login</a>
-          <a href="/users/signup" class="btn btn-solid-primary">Sign up</a>
+          {{if .IsAuthenticated}}
+            <div class="user-info">
+              You are logged in as
+              <span class="user-info-email">{{.AuthenticatedUser.Email}}</span>
+            </div>
+            <form method="POST" action="/users/logout">
+              <button type="submit" class="btn btn-solid-secondary">
+                Logout
+              </button>
+            </form>
+          {{else}}
+            <a href="/users/login" class="btn btn-solid-secondary">Login</a>
+            <a href="/users/signup" class="btn btn-solid-primary">Sign up</a>
+          {{end}}
         </div>
       </div>
     </div>

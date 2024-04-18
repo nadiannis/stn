@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"encoding/gob"
 	"flag"
 	"fmt"
 	"log"
@@ -47,6 +48,8 @@ func main() {
 	sessionManager.Store = mysqlstore.New(db)
 	sessionManager.Lifetime = 24 * time.Hour
 	sessionManager.Cookie.Secure = true
+
+	gob.Register(AuthenticatedUser{})
 
 	app := application{
 		infoLog:        infoLog,

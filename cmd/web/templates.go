@@ -9,7 +9,9 @@ import (
 )
 
 type templateData struct {
-	Form any
+	Form              any
+	IsAuthenticated   bool
+	AuthenticatedUser *AuthenticatedUser
 }
 
 func newTemplateCache() (map[string]*template.Template, error) {
