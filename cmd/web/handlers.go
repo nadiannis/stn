@@ -111,6 +111,8 @@ func (app *application) signup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	app.sessionManager.Put(r.Context(), "flash", "You have successfully registered")
+
 	http.Redirect(w, r, "/users/login", http.StatusSeeOther)
 }
 
@@ -184,6 +186,7 @@ func (app *application) logout(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	app.sessionManager.Remove(r.Context(), "authenticatedUser")
+	app.sessionManager.Put(r.Context(), "flash", "You have successfully logged out")
 
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }

@@ -12,6 +12,7 @@ type templateData struct {
 	Form              any
 	IsAuthenticated   bool
 	AuthenticatedUser *AuthenticatedUser
+	Flash             string
 }
 
 func newTemplateCache() (map[string]*template.Template, error) {

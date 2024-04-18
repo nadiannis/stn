@@ -702,6 +702,14 @@ footer {
   gap: 1rem;
 }
 
+.flash {
+  background: var(--color-black);
+  color: var(--color-gray-lighter);
+  font-weight: 600;
+  text-align: center;
+  padding: 0.625rem 0;
+}
+
 @media (min-width: 510px) {
   header {
     padding: 1.5rem 0;

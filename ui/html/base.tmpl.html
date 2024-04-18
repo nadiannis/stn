@@ -10,6 +10,11 @@
   <body>
     {{template "header" .}}
     <main>
+      {{with .Flash}}
+      <div class="flash">
+        <div class="container">{{.}}</div>
+      </div>
+      {{end}}
       {{template "main" .}}
     </main>
     {{template "footer" .}}

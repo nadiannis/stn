@@ -59,6 +59,7 @@ func (app *application) newTemplateData(r *http.Request) *templateData {
 	return &templateData{
 		IsAuthenticated:   app.isAuthenticated(r),
 		AuthenticatedUser: app.getAuthenticatedUser(r),
+		Flash:             app.sessionManager.PopString(r.Context(), "flash"),
 	}
 }
 
