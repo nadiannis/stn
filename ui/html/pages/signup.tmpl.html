@@ -23,6 +23,7 @@
             id="email"
             placeholder="email@example.com"
             value="{{.Form.Email}}"
+            {{if .Form.FieldErrors.email}}class="input-error"{{end}}
           />
           {{with .Form.FieldErrors.email}}
             <span class="error">{{.}}</span>
@@ -30,7 +31,12 @@
         </div>
         <div class="form-field">
           <label for="password">Password</label>
-          <input type="password" name="password" id="password" />
+          <input 
+            type="password" 
+            name="password" 
+            id="password"
+            {{if .Form.FieldErrors.password}}class="input-error"{{end}} 
+          />
           {{with .Form.FieldErrors.password}}
             <span class="error">{{.}}</span>
           {{end}}
