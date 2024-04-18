@@ -18,6 +18,7 @@ func (app *application) routes() http.Handler {
 	mux.Handle("GET /users/login", app.sessionManager.LoadAndSave(app.authenticate(http.HandlerFunc(app.loginView))))
 	mux.Handle("POST /users/login", app.sessionManager.LoadAndSave(app.authenticate(http.HandlerFunc(app.login))))
 
+	mux.Handle("POST /users/logout", app.sessionManager.LoadAndSave(app.authenticate(app.protectRoute(http.HandlerFunc(app.logout)))))
 	mux.Handle("GET /links/list", app.sessionManager.LoadAndSave(app.authenticate(app.protectRoute(http.HandlerFunc(app.linkListView)))))
 	mux.Handle("GET /links/create", app.sessionManager.LoadAndSave(app.authenticate(app.protectRoute(http.HandlerFunc(app.linkCreateView)))))
 	mux.Handle("GET /links/{id}", app.sessionManager.LoadAndSave(app.authenticate(app.protectRoute(http.HandlerFunc(app.linkDetailView)))))

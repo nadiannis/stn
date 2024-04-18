@@ -176,3 +176,14 @@ func (app *application) login(w http.ResponseWriter, r *http.Request) {
 
 	http.Redirect(w, r, "/links/list", http.StatusSeeOther)
 }
+
+func (app *application) logout(w http.ResponseWriter, r *http.Request) {
+	err := app.sessionManager.RenewToken(r.Context())
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+	app.sessionManager.Remove(r.Context(), "authenticatedUser")
+
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
