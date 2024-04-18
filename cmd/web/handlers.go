@@ -4,25 +4,21 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"strings"
-	"unicode/utf8"
 
 	"github.com/nadiannis/stn/internal/models"
 	"github.com/nadiannis/stn/internal/validator"
 )
 
 type signupForm struct {
-	Email          string
-	Password       string
-	FieldErrors    map[string]string
-	NonFieldErrors []string
+	Email    string
+	Password string
+	validator.Validator
 }
 
 type loginForm struct {
-	Email          string
-	Password       string
-	FieldErrors    map[string]string
-	NonFieldErrors []string
+	Email    string
+	Password string
+	validator.Validator
 }
 
 func (app *application) homeView(w http.ResponseWriter, r *http.Request) {
@@ -73,24 +69,17 @@ func (app *application) signup(w http.ResponseWriter, r *http.Request) {
 	}
 
 	form := signupForm{
-		Email:       formValues.Get("email"),
-		Password:    formValues.Get("password"),
-		FieldErrors: make(map[string]string),
+		Email:    formValues.Get("email"),
+		Password: formValues.Get("password"),
 	}
 
-	if strings.TrimSpace(form.Email) == "" {
-		form.FieldErrors["email"] = "Email is required"
-	} else if !validator.EmailRX.MatchString(form.Email) {
-		form.FieldErrors["email"] = "Email is not valid"
-	}
+	form.CheckField(validator.NotEmpty(form.Email), "email", "Email is required")
+	form.CheckField(validator.Matches(form.Email, validator.EmailRX), "email", "Email is not valid")
 
-	if strings.TrimSpace(form.Password) == "" {
-		form.FieldErrors["password"] = "Password is required"
-	} else if utf8.RuneCountInString(form.Password) < 8 {
-		form.FieldErrors["password"] = "Password should be at least 8 characters long"
-	}
+	form.CheckField(validator.NotEmpty(form.Password), "password", "Password is required")
+	form.CheckField(validator.MinChars(form.Password, 8), "password", "Password should be at least 8 characters long")
 
-	if len(form.FieldErrors) != 0 {
+	if !form.Valid() {
 		data := app.newTemplateData(r)
 		data.Form = form
 		app.render(w, http.StatusUnprocessableEntity, "signup.tmpl.html", data)
@@ -100,7 +89,7 @@ func (app *application) signup(w http.ResponseWriter, r *http.Request) {
 	err = app.users.Insert(form.Email, form.Password)
 	if err != nil {
 		if errors.Is(err, models.ErrDuplicateEmail) {
-			form.FieldErrors["email"] = "Email is already in use"
+			form.AddFieldError("email", "Email is already in use")
 
 			data := app.newTemplateData(r)
 			data.Form = form
@@ -130,22 +119,16 @@ func (app *application) login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	form := loginForm{
-		Email:       formValues.Get("email"),
-		Password:    formValues.Get("password"),
-		FieldErrors: make(map[string]string),
+		Email:    formValues.Get("email"),
+		Password: formValues.Get("password"),
 	}
 
-	if strings.TrimSpace(form.Email) == "" {
-		form.FieldErrors["email"] = "Email is required"
-	} else if !validator.EmailRX.MatchString(form.Email) {
-		form.FieldErrors["email"] = "Email is not valid"
-	}
+	form.CheckField(validator.NotEmpty(form.Email), "email", "Email is required")
+	form.CheckField(validator.Matches(form.Email, validator.EmailRX), "email", "Email is not valid")
 
-	if strings.TrimSpace(form.Password) == "" {
-		form.FieldErrors["password"] = "Password is required"
-	}
+	form.CheckField(validator.NotEmpty(form.Password), "password", "Password is required")
 
-	if len(form.FieldErrors) != 0 {
+	if !form.Valid() {
 		data := app.newTemplateData(r)
 		data.Form = form
 		app.render(w, http.StatusUnprocessableEntity, "login.tmpl.html", data)
@@ -155,7 +138,7 @@ func (app *application) login(w http.ResponseWriter, r *http.Request) {
 	user, err := app.users.Authenticate(form.Email, form.Password)
 	if err != nil {
 		if errors.Is(err, models.ErrInvalidCredentials) {
-			form.NonFieldErrors = append(form.NonFieldErrors, "Email or password is incorrect")
+			form.AddNonFieldError("Email or password is incorrect")
 
 			data := app.newTemplateData(r)
 			data.Form = form
