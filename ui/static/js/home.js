@@ -9,6 +9,7 @@ homeLinkCreateForm.addEventListener('submit', async (e) => {
   resultContainer.classList.remove('short-link-container');
   resultContainer.innerHTML = '';
   errorContainer.textContent = '';
+  e.target.url.classList.remove('input-error');
 
   try {
     const response = await fetch(
@@ -46,6 +47,7 @@ homeLinkCreateForm.addEventListener('submit', async (e) => {
       const result = await error.response.json();
       console.log(result);
 
+      e.target.url.classList.add('input-error');
       errorContainer.textContent = result.fieldErrors.url;
     }
   }
