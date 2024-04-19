@@ -11,13 +11,17 @@
           place
         </p>
         <div class="hero-cta">
-          <form method="POST" action="/links/create">
+          <form id="home-link-create-form">
             <input
               type="text"
+              name="url"
               placeholder="https://super-long-link.com/please-shorten-it"
             />
             <button type="submit" class="btn btn-solid-primary">Shorten</button>
           </form>
+          <span class="error"></span>
+          <div class="hero-cta-result">
+          </div>
           <span><a href="/users/login">Login</a>to unlock all features</span>
         </div>
       </div>
@@ -27,4 +31,8 @@
     </div>
   </div>
 </section>
+{{end}}
+
+{{define "script"}}
+<script src="/static/js/home.js"></script>
 {{end}}

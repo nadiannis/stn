@@ -263,6 +263,8 @@ main {
 .hero-cta {
   margin-top: 2rem;
   width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .hero-cta form {
@@ -285,9 +287,23 @@ main {
 
 .hero-cta span a {
   font-weight: 800;
-  color: var(--color-accent);
+  color: var(--color-primary);
   text-decoration: none;
   margin-right: 0.3rem;
+}
+
+.hero-cta-result.short-link-container {
+  font-weight: 800;
+  background: var(--color-white);
+  padding: 0.8rem 1.25rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 16px -6px rgba(0, 10, 30, 0.15);
+  transition: all 200ms ease;
+}
+
+.short-link-container a {
+  color: var(--color-accent);
+  text-decoration: none;
 }
 
 .hero-img {

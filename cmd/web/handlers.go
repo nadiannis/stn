@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -21,6 +22,12 @@ type loginForm struct {
 	validator.Validator
 }
 
+type linkForm struct {
+	URL      string
+	BackHalf string
+	validator.Validator
+}
+
 func (app *application) homeView(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
 		app.notFound(w)
@@ -28,6 +35,7 @@ func (app *application) homeView(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := app.newTemplateData(r)
+	data.Form = linkForm{}
 	app.render(w, http.StatusOK, "home.tmpl.html", data)
 }
 
@@ -38,7 +46,107 @@ func (app *application) linkListView(w http.ResponseWriter, r *http.Request) {
 
 func (app *application) linkCreateView(w http.ResponseWriter, r *http.Request) {
 	data := app.newTemplateData(r)
+	data.Form = linkForm{}
 	app.render(w, http.StatusOK, "link-create.tmpl.html", data)
+}
+
+func (app *application) linkCreate(w http.ResponseWriter, r *http.Request) {
+	from := r.URL.Query().Get("from")
+	if from == "" {
+		from = "home"
+	}
+
+	formValues, err := decodePostForm(r)
+	if err != nil {
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
+
+	form := linkForm{
+		URL:      formValues.Get("url"),
+		BackHalf: formValues.Get("back-half"),
+	}
+
+	form.CheckField(validator.NotEmpty(form.URL), "url", "URL is required")
+	form.CheckField(validator.Matches(form.URL, validator.URLRegex), "url", "URL is not valid")
+
+	if validator.NotEmpty(form.BackHalf) {
+		form.CheckField(validator.Matches(form.BackHalf, validator.BackHalfRegex), "backHalf", "Back-half can only contain letters, numbers, & the characters _-")
+	}
+
+	if !form.Valid() {
+		if from == "home" {
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(map[string]any{
+				"fieldErrors":    form.FieldErrors,
+				"nonFieldErrors": form.NonFieldErrors,
+			})
+			return
+		}
+
+		data := app.newTemplateData(r)
+		data.Form = form
+		app.render(w, http.StatusUnprocessableEntity, from+".tmpl.html", data)
+		return
+	}
+
+	if !validator.NotEmpty(form.BackHalf) {
+		for {
+			backHalf := randString(5)
+			exists, err := app.links.BackHalfExists(backHalf)
+			if err != nil {
+				app.serverError(w, err)
+				return
+			}
+
+			if !exists {
+				form.BackHalf = backHalf
+				break
+			}
+		}
+	}
+
+	var userID string
+	if user := app.getAuthenticatedUser(r); user != nil {
+		userID = user.ID
+	}
+
+	link, err := app.links.Insert(form.URL, form.BackHalf, userID)
+	if err != nil {
+		if errors.Is(err, models.ErrDuplicateBackHalf) {
+			form.AddFieldError("backHalf", "Back-half is already in use")
+
+			if from == "home" {
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(http.StatusBadRequest)
+				json.NewEncoder(w).Encode(map[string]any{
+					"fieldErrors":    form.FieldErrors,
+					"nonFieldErrors": form.NonFieldErrors,
+				})
+				return
+			}
+
+			data := app.newTemplateData(r)
+			data.Form = form
+			app.render(w, http.StatusUnprocessableEntity, from+".tmpl.html", data)
+		} else {
+			app.serverError(w, err)
+		}
+		return
+	}
+
+	if from == "home" {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusCreated)
+		json.NewEncoder(w).Encode(map[string]any{
+			"url":      form.URL,
+			"backHalf": form.BackHalf,
+		})
+		return
+	}
+
+	http.Redirect(w, r, "/links/"+link.ID.String(), http.StatusSeeOther)
 }
 
 func (app *application) linkDetailView(w http.ResponseWriter, r *http.Request) {
@@ -74,7 +182,7 @@ func (app *application) signup(w http.ResponseWriter, r *http.Request) {
 	}
 
 	form.CheckField(validator.NotEmpty(form.Email), "email", "Email is required")
-	form.CheckField(validator.Matches(form.Email, validator.EmailRX), "email", "Email is not valid")
+	form.CheckField(validator.Matches(form.Email, validator.EmailRegex), "email", "Email is not valid")
 
 	form.CheckField(validator.NotEmpty(form.Password), "password", "Password is required")
 	form.CheckField(validator.MinChars(form.Password, 8), "password", "Password should be at least 8 characters long")
@@ -124,7 +232,7 @@ func (app *application) login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	form.CheckField(validator.NotEmpty(form.Email), "email", "Email is required")
-	form.CheckField(validator.Matches(form.Email, validator.EmailRX), "email", "Email is not valid")
+	form.CheckField(validator.Matches(form.Email, validator.EmailRegex), "email", "Email is not valid")
 
 	form.CheckField(validator.NotEmpty(form.Password), "password", "Password is required")
 

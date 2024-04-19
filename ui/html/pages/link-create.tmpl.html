@@ -6,16 +6,19 @@
     <div class="link-create-edit-content">
       <h2>Shorten a long link</h2>
       <p>Turn your long link into a more readable link.</p>
-      <form method="POST" action="/links/create" novalidate>
+      <form method="POST" action="/links/create?from=link-create" novalidate>
         <div class="form-field">
-          <label for="long-link">Long link</label>
+          <label for="url">Long link</label>
           <input
             type="text"
-            name="long-link"
-            id="long-link"
+            name="url"
+            id="url"
             placeholder="https://super-long-link.com/please-shorten-it"
+            value="{{.Form.URL}}"
           />
-          <span class="error">Error</span>
+          {{with .Form.FieldErrors.url}}
+            <span class="error">{{.}}</span>
+          {{end}}
         </div>
         <div class="form-two-columns">
           <div class="form-field">
@@ -24,18 +27,19 @@
               type="text"
               name="domain"
               id="domain"
-              value="stn.nadiannis.com"
+              value="{{.Origin.host}}"
               disabled
             />
-            <span class="error">Error</span>
           </div>
           <div class="form-field">
             <label for="back-half">
               Custom back-half
               <span class="label-note">(optional)</span>
             </label>
-            <input type="text" name="back-half" id="back-half" />
-            <span class="error">Error</span>
+            <input type="text" name="back-half" id="back-half" value="{{.Form.BackHalf}}" />
+            {{with .Form.FieldErrors.backHalf}}
+              <span class="error">{{.}}</span>
+            {{end}}
           </div>
         </div>
         <div class="buttons">
