@@ -13,6 +13,7 @@ func (app *application) routes() http.Handler {
 	mux.Handle("GET /static/", fileServer)
 
 	mux.Handle("GET /", app.sessionManager.LoadAndSave(app.authenticate(http.HandlerFunc(app.homeView))))
+	mux.Handle("GET /{backhalf}", app.sessionManager.LoadAndSave(app.authenticate(http.HandlerFunc(app.linkRedirect))))
 	mux.Handle("GET /users/signup", app.sessionManager.LoadAndSave(app.authenticate(http.HandlerFunc(app.signupView))))
 	mux.Handle("POST /users/signup", app.sessionManager.LoadAndSave(app.authenticate(http.HandlerFunc(app.signup))))
 	mux.Handle("GET /users/login", app.sessionManager.LoadAndSave(app.authenticate(http.HandlerFunc(app.loginView))))

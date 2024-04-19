@@ -39,6 +39,22 @@ func (app *application) homeView(w http.ResponseWriter, r *http.Request) {
 	app.render(w, http.StatusOK, "home.tmpl.html", data)
 }
 
+func (app *application) linkRedirect(w http.ResponseWriter, r *http.Request) {
+	backHalf := r.PathValue("backhalf")
+
+	link, err := app.links.GetByBackHalf(backHalf)
+	if err != nil {
+		if errors.Is(err, models.ErrNoRecord) {
+			app.notFound(w)
+		} else {
+			app.serverError(w, err)
+		}
+		return
+	}
+
+	http.Redirect(w, r, link.URL, http.StatusFound)
+}
+
 func (app *application) linkListView(w http.ResponseWriter, r *http.Request) {
 	data := app.newTemplateData(r)
 	app.render(w, http.StatusOK, "link-list.tmpl.html", data)

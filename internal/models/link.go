@@ -66,6 +66,22 @@ func (m *LinkModel) Insert(url, backHalf string, userID string) (*Link, error) {
 	return link, nil
 }
 
+func (m *LinkModel) GetByBackHalf(backHalf string) (*Link, error) {
+	link := &Link{}
+
+	stmt := "SELECT * FROM links WHERE back_half = ?"
+	err := m.DB.QueryRow(stmt, backHalf).Scan(&link.ID, &link.URL, &link.BackHalf, &link.Engagements, &link.UserID, &link.CreatedAt, &link.UpdatedAt)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, ErrNoRecord
+		} else {
+			return nil, err
+		}
+	}
+
+	return link, nil
+}
+
 func (m *LinkModel) BackHalfExists(backHalf string) (bool, error) {
 	var exists bool
 
