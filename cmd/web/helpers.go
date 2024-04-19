@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"math/rand"
 	"net/http"
 	"net/url"
 	"runtime/debug"
@@ -60,6 +61,7 @@ func (app *application) newTemplateData(r *http.Request) *templateData {
 		IsAuthenticated:   app.isAuthenticated(r),
 		AuthenticatedUser: app.getAuthenticatedUser(r),
 		Flash:             app.sessionManager.PopString(r.Context(), "flash"),
+		Origin:            reqOrigin(r),
 	}
 }
 
@@ -79,4 +81,29 @@ func (app *application) getAuthenticatedUser(r *http.Request) *AuthenticatedUser
 	}
 
 	return &authenticatedUser
+}
+
+func randString(n int) string {
+	const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_"
+
+	bytes := make([]byte, n)
+	for i := range bytes {
+		bytes[i] = chars[rand.Intn(len(chars))]
+	}
+
+	return string(bytes)
+}
+
+func reqOrigin(r *http.Request) map[string]string {
+	var proto string
+	if isSecure := r.TLS; isSecure == nil {
+		proto = "http://"
+	} else {
+		proto = "https://"
+	}
+
+	return map[string]string{
+		"proto": proto,
+		"host":  r.Host,
+	}
 }

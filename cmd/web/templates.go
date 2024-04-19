@@ -13,6 +13,7 @@ type templateData struct {
 	IsAuthenticated   bool
 	AuthenticatedUser *AuthenticatedUser
 	Flash             string
+	Origin            map[string]string
 }
 
 func newTemplateCache() (map[string]*template.Template, error) {
