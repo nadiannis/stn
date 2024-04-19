@@ -4,7 +4,9 @@ import (
 	"io/fs"
 	"path/filepath"
 	"text/template"
+	"time"
 
+	"github.com/nadiannis/stn/internal/models"
 	"github.com/nadiannis/stn/ui"
 )
 
@@ -14,6 +16,20 @@ type templateData struct {
 	AuthenticatedUser *AuthenticatedUser
 	Flash             string
 	Origin            map[string]string
+	Link              *models.Link
+}
+
+func formatDate(t time.Time) string {
+	format := "Jan 02, 2006 03:04 PM"
+	location, err := time.LoadLocation("Local")
+	if err != nil {
+		return t.Format(format)
+	}
+	return t.In(location).Format(format)
+}
+
+var functions = template.FuncMap{
+	"formatDate": formatDate,
 }
 
 func newTemplateCache() (map[string]*template.Template, error) {
@@ -33,7 +49,7 @@ func newTemplateCache() (map[string]*template.Template, error) {
 			page,
 		}
 
-		ts, err := template.ParseFS(ui.Files, files...)
+		ts, err := template.New(name).Funcs(functions).ParseFS(ui.Files, files...)
 		if err != nil {
 			return nil, err
 		}

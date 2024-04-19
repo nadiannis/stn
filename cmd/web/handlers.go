@@ -167,8 +167,19 @@ func (app *application) linkCreate(w http.ResponseWriter, r *http.Request) {
 
 func (app *application) linkDetailView(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
-	fmt.Println("Link ID:", id)
+
+	link, err := app.links.GetByID(id)
+	if err != nil {
+		if errors.Is(err, models.ErrNoRecord) {
+			app.notFound(w)
+		} else {
+			app.serverError(w, err)
+		}
+		return
+	}
+
 	data := app.newTemplateData(r)
+	data.Link = link
 	app.render(w, http.StatusOK, "link-detail.tmpl.html", data)
 }
 

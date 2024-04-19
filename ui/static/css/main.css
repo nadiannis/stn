@@ -467,7 +467,7 @@ footer {
 .link-detail-content p {
   font-size: 1.125rem;
   font-weight: 400;
-  margin-top: 1rem;
+  margin-top: 0.8rem;
 }
 
 .link-create-edit-content form .buttons {
@@ -590,6 +590,11 @@ footer {
   flex-direction: column;
 }
 
+.link-detail-content {
+  display: flex;
+  flex-direction: column;
+}
+
 .link-detail-content .actions {
   margin-top: 2.625rem;
 }
@@ -605,7 +610,6 @@ footer {
 
 .link-detail-content p {
   font-size: 0.875rem;
-  margin-top: 1.25rem;
   color: var(--color-gray);
   word-break: break-all;
   max-width: 800px;

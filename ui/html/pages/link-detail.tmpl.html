@@ -9,23 +9,18 @@
   </div>
   <div class="container">
     <div class="link-detail-content">
-      <a href="https://stn.nadiannis.com/short-key" target="_blank">
-        <h2>stn.nadiannis.com/short-key</h2>
+      <a href="{{.Origin.proto}}{{.Origin.host}}/{{.Link.BackHalf}}" target="_blank">
+        <h2>{{.Origin.host}}/{{.Link.BackHalf}}</h2>
       </a>
-      <a
-        href="https://drive.google.com/drive/folders/1hqYFr0eiOE3MAeUtq2Lso3YV0KjEocdW1hqYFr0eiOE3MAeUtq2Lso3YV0KjEocdW1hqYFr0eiOE3MAeUtq2Lso3YV0KjEocdW"
-        target="_blank"
-      >
-        <p>
-          https://drive.google.com/drive/folders/1hqYFr0eiOE3MAeUtq2Lso3YV0KjEocdW1hqYFr0eiOE3MAeUtq2Lso3YV0KjEocdW1hqYFr0eiOE3MAeUtq2Lso3YV0KjEocdW
-        </p>
+      <a href="{{.Link.URL}}" target="_blank">
+        <p>{{.Link.URL}}</p>
       </a>
       <div class="actions">
         <button class="btn btn-solid-light">
           <i data-lucide="copy" class="icon-16px"></i>
           Copy short link
         </button>
-        <a href="/links/1/edit" class="btn btn-outline">
+        <a href="/links/{{.Link.ID}}/edit" class="btn btn-outline">
           <span>
             <i data-lucide="pencil" class="icon-16px"></i>
             Edit
@@ -41,16 +36,16 @@
       <div class="side-info">
         <div class="side-info-item">
           Total Engagements
-          <span class="side-info-value">8 clicks</span>
+          <span class="side-info-value">{{.Link.Engagements}} clicks</span>
         </div>
         <div class="side-info-additional">
           <div class="side-info-item">
             Created at
-            <span class="side-info-value">Apr 12, 2024 09:93 PM</span>
+            <span class="side-info-value">{{formatDate .Link.CreatedAt}}</span>
           </div>
           <div class="side-info-item">
             Updated at
-            <span class="side-info-value">Apr 12, 2024 09:93 PM</span>
+            <span class="side-info-value">{{formatDate .Link.UpdatedAt}}</span>
           </div>
         </div>
       </div>
