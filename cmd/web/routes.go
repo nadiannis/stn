@@ -26,5 +26,5 @@ func (app *application) routes() http.Handler {
 	mux.Handle("GET /links/{id}", app.sessionManager.LoadAndSave(app.authenticate(app.protectRoute(http.HandlerFunc(app.linkDetailView)))))
 	mux.Handle("GET /links/{id}/edit", app.sessionManager.LoadAndSave(app.authenticate(app.protectRoute(http.HandlerFunc(app.linkEditView)))))
 
-	return app.requestLogger(secureHeaders(mux))
+	return app.recoverPanic(app.requestLogger(secureHeaders(mux)))
 }
