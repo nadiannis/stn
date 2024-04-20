@@ -6,10 +6,11 @@
     <div class="link-all-content">
       <h2>Links</h2>
       <div class="link-list">
+        {{range .Links}}
         <div class="link-item">
           <div class="link-item-top">
-            <a href="https://stn.nadiannis.com/short-key" target="_blank">
-              <h3>stn.nadiannis.com/short-key</h3>
+            <a href="{{$.Origin.proto}}{{$.Origin.host}}/{{.BackHalf}}" target="_blank">
+              <h3>{{$.Origin.host}}/{{.BackHalf}}</h3>
             </a>
             <button class="btn btn-solid-light">
               <i data-lucide="copy" class="icon-16px"></i>
@@ -17,20 +18,15 @@
             </button>
           </div>
           <div class="link-item-mid">
-            <a
-              href="https://drive.google.com/drive/folders/1hqYFr0eiOE3MAeUtq2Lso3YV0KjEocdW1hqYFr0eiOE3MAeUtq2Lso3YV0KjEocdW1hqYFr0eiOE3MAeUtq2Lso3YV0KjEocdW"
-              target="_blank"
-            >
-              <p class="text-snippet">
-                https://drive.google.com/drive/folders/1hqYFr0eiOE3MAeUtq2Lso3YV0KjEocdW1hqYFr0eiOE3MAeUtq2Lso3YV0KjEocdW1hqYFr0eiOE3MAeUtq2Lso3YV0KjEocdW
-              </p>
+            <a href="{{.URL}}" target="_blank">
+              <p class="text-snippet">{{.URL}}</p>
             </a>
           </div>
           <div class="link-item-more">
-            <span class="link-item-more-info">4 engagements</span>
+            <span class="link-item-more-info">{{.Engagements}} engagements</span>
             <div class="actions">
               <a
-                href="/links/1/edit"
+                href="/links/{{.ID}}/edit"
                 class="btn btn-outline"
                 title="Edit link"
               >
@@ -42,7 +38,7 @@
                 <i data-lucide="trash" class="icon-16px"></i>
               </button>
               <a
-                href="/links/1"
+                href="/links/{{.ID}}"
                 class="btn btn-outline"
                 title="View link detail"
               >
@@ -56,6 +52,7 @@
             </div>
           </div>
         </div>
+        {{end}}
       </div>
     </div>
     <aside>

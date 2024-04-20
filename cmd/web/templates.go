@@ -17,6 +17,7 @@ type templateData struct {
 	Flash             string
 	Origin            map[string]string
 	Link              *models.Link
+	Links             []*models.Link
 }
 
 func formatDate(t time.Time) string {

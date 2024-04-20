@@ -56,7 +56,16 @@ func (app *application) linkRedirect(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) linkListView(w http.ResponseWriter, r *http.Request) {
+	userID := app.getAuthenticatedUser(r).ID
+
+	links, err := app.links.GetByUserID(userID)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
 	data := app.newTemplateData(r)
+	data.Links = links
 	app.render(w, http.StatusOK, "link-list.tmpl.html", data)
 }
 

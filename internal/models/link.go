@@ -98,6 +98,32 @@ func (m *LinkModel) GetByBackHalf(backHalf string) (*Link, error) {
 	return link, nil
 }
 
+func (m *LinkModel) GetByUserID(userID string) ([]*Link, error) {
+	stmt := "SELECT * FROM links WHERE user_id = ? ORDER BY created_at DESC"
+	rows, err := m.DB.Query(stmt, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	links := []*Link{}
+
+	for rows.Next() {
+		link := &Link{}
+		err := rows.Scan(&link.ID, &link.URL, &link.BackHalf, &link.Engagements, &link.UserID, &link.CreatedAt, &link.UpdatedAt)
+		if err != nil {
+			return nil, err
+		}
+		links = append(links, link)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return links, nil
+}
+
 func (m *LinkModel) BackHalfExists(backHalf string) (bool, error) {
 	var exists bool
 
