@@ -186,6 +186,16 @@ func (app *application) linkDetailView(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var userID string
+	if user := app.getAuthenticatedUser(r); user != nil {
+		userID = user.ID
+	}
+
+	if !link.UserID.Valid || (link.UserID.Valid && link.UserID.V.String() != userID) {
+		http.Redirect(w, r, "/links/list", http.StatusSeeOther)
+		return
+	}
+
 	data := app.newTemplateData(r)
 	data.Link = link
 	app.render(w, http.StatusOK, "link-detail.tmpl.html", data)
@@ -201,6 +211,16 @@ func (app *application) linkEditView(w http.ResponseWriter, r *http.Request) {
 		} else {
 			app.serverError(w, err)
 		}
+		return
+	}
+
+	var userID string
+	if user := app.getAuthenticatedUser(r); user != nil {
+		userID = user.ID
+	}
+
+	if !link.UserID.Valid || (link.UserID.Valid && link.UserID.V.String() != userID) {
+		http.Redirect(w, r, "/links/list", http.StatusSeeOther)
 		return
 	}
 
