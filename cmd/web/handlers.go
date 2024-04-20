@@ -9,13 +9,7 @@ import (
 	"github.com/nadiannis/stn/internal/validator"
 )
 
-type signupForm struct {
-	Email    string
-	Password string
-	validator.Validator
-}
-
-type loginForm struct {
+type authForm struct {
 	Email    string
 	Password string
 	validator.Validator
@@ -311,7 +305,7 @@ func (app *application) linkDelete(w http.ResponseWriter, r *http.Request) {
 
 func (app *application) signupView(w http.ResponseWriter, r *http.Request) {
 	data := app.newTemplateData(r)
-	data.Form = signupForm{}
+	data.Form = authForm{}
 	app.render(w, http.StatusOK, "signup.tmpl.html", data)
 }
 
@@ -322,7 +316,7 @@ func (app *application) signup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	form := signupForm{
+	form := authForm{
 		Email:    formValues.Get("email"),
 		Password: formValues.Get("password"),
 	}
@@ -361,7 +355,7 @@ func (app *application) signup(w http.ResponseWriter, r *http.Request) {
 
 func (app *application) loginView(w http.ResponseWriter, r *http.Request) {
 	data := app.newTemplateData(r)
-	data.Form = loginForm{}
+	data.Form = authForm{}
 	app.render(w, http.StatusOK, "login.tmpl.html", data)
 }
 
@@ -372,7 +366,7 @@ func (app *application) login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	form := loginForm{
+	form := authForm{
 		Email:    formValues.Get("email"),
 		Password: formValues.Get("password"),
 	}
