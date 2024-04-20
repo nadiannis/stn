@@ -721,6 +721,12 @@ footer {
   margin-top: 1.25rem;
 }
 
+.link-all aside .btn-link-create {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
 .link-all .side-info {
   margin-top: 2rem;
   gap: 1rem;
