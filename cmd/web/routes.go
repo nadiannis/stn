@@ -26,6 +26,7 @@ func (app *application) routes() http.Handler {
 	mux.Handle("GET /links/{id}", app.sessionManager.LoadAndSave(app.authenticate(app.protectRoute(http.HandlerFunc(app.linkDetailView)))))
 	mux.Handle("GET /links/{id}/edit", app.sessionManager.LoadAndSave(app.authenticate(app.protectRoute(http.HandlerFunc(app.linkEditView)))))
 	mux.Handle("PUT /links/{id}/edit", app.sessionManager.LoadAndSave(app.authenticate(app.protectRoute(http.HandlerFunc(app.linkEdit)))))
+	mux.Handle("DELETE /links/{id}", app.sessionManager.LoadAndSave(app.authenticate(app.protectRoute(http.HandlerFunc(app.linkDelete)))))
 
 	return app.recoverPanic(app.requestLogger(secureHeaders(mux)))
 }

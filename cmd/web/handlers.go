@@ -277,6 +277,18 @@ func (app *application) linkEdit(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/links/"+id, http.StatusSeeOther)
 }
 
+func (app *application) linkDelete(w http.ResponseWriter, r *http.Request) {
+	id := r.PathValue("id")
+
+	err := app.links.Delete(id)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	http.Redirect(w, r, "/links/list", http.StatusSeeOther)
+}
+
 func (app *application) signupView(w http.ResponseWriter, r *http.Request) {
 	data := app.newTemplateData(r)
 	data.Form = signupForm{}

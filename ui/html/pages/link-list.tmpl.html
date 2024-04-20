@@ -34,7 +34,7 @@
                   <i data-lucide="pencil" class="icon-16px"></i>
                 </span>
               </a>
-              <button class="btn btn-outline" title="Delete link">
+              <button class="btn btn-outline btn-link-delete" title="Delete link" data-id="{{.ID}}">
                 <i data-lucide="trash" class="icon-16px"></i>
               </button>
               <a
@@ -76,4 +76,8 @@
     </aside>
   </div>
 </section>
+{{end}}
+
+{{define "script"}}
+<script src="/static/js/link-list.js"></script>
 {{end}}
