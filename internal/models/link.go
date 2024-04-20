@@ -132,3 +132,20 @@ func (m *LinkModel) BackHalfExists(backHalf string) (bool, error) {
 
 	return exists, err
 }
+
+func (m *LinkModel) Update(id, url, backHalf string) error {
+	stmt := "UPDATE links SET url = ?, back_half = ?, updated_at = UTC_TIMESTAMP() WHERE id = ?"
+	_, err := m.DB.Exec(stmt, url, backHalf, id)
+	if err != nil {
+		var mySQLError *mysql.MySQLError
+		if errors.As(err, &mySQLError) {
+			if mySQLError.Number == 1062 && strings.Contains(mySQLError.Message, "links_uc_back_half") {
+				return ErrDuplicateBackHalf
+			}
+		}
+
+		return err
+	}
+
+	return nil
+}

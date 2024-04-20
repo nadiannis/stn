@@ -47,7 +47,7 @@ func (app *application) render(w http.ResponseWriter, status int, page string, d
 	buf.WriteTo(w)
 }
 
-func decodePostForm(r *http.Request) (url.Values, error) {
+func decodeForm(r *http.Request) (url.Values, error) {
 	err := r.ParseForm()
 	if err != nil {
 		return nil, err

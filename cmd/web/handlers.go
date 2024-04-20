@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"net/http"
 
 	"github.com/nadiannis/stn/internal/models"
@@ -81,7 +80,7 @@ func (app *application) linkCreate(w http.ResponseWriter, r *http.Request) {
 		from = "home"
 	}
 
-	formValues, err := decodePostForm(r)
+	formValues, err := decodeForm(r)
 	if err != nil {
 		app.clientError(w, http.StatusBadRequest)
 		return
@@ -194,9 +193,88 @@ func (app *application) linkDetailView(w http.ResponseWriter, r *http.Request) {
 
 func (app *application) linkEditView(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
-	fmt.Println("Link ID:", id)
+
+	link, err := app.links.GetByID(id)
+	if err != nil {
+		if errors.Is(err, models.ErrNoRecord) {
+			app.notFound(w)
+		} else {
+			app.serverError(w, err)
+		}
+		return
+	}
+
 	data := app.newTemplateData(r)
+	data.Link = link
 	app.render(w, http.StatusOK, "link-edit.tmpl.html", data)
+}
+
+func (app *application) linkEdit(w http.ResponseWriter, r *http.Request) {
+	id := r.PathValue("id")
+
+	formValues, err := decodeForm(r)
+	if err != nil {
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
+
+	form := linkForm{
+		URL:      formValues.Get("url"),
+		BackHalf: formValues.Get("back-half"),
+	}
+
+	form.CheckField(validator.NotEmpty(form.URL), "url", "URL is required")
+	form.CheckField(validator.Matches(form.URL, validator.URLRegex), "url", "URL is not valid")
+
+	if validator.NotEmpty(form.BackHalf) {
+		form.CheckField(validator.Matches(form.BackHalf, validator.BackHalfRegex), "back-half", "Back-half can only contain letters, numbers, & the characters _-")
+	}
+
+	if !form.Valid() {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]any{
+			"fieldErrors":    form.FieldErrors,
+			"nonFieldErrors": form.NonFieldErrors,
+		})
+		return
+	}
+
+	if !validator.NotEmpty(form.BackHalf) {
+		for {
+			backHalf := randString(5)
+			exists, err := app.links.BackHalfExists(backHalf)
+			if err != nil {
+				app.serverError(w, err)
+				return
+			}
+
+			if !exists {
+				form.BackHalf = backHalf
+				break
+			}
+		}
+	}
+
+	err = app.links.Update(id, form.URL, form.BackHalf)
+	if err != nil {
+		if errors.Is(err, models.ErrDuplicateBackHalf) {
+			form.AddFieldError("back-half", "Back-half is already in use")
+
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(map[string]any{
+				"fieldErrors":    form.FieldErrors,
+				"nonFieldErrors": form.NonFieldErrors,
+			})
+			return
+		} else {
+			app.serverError(w, err)
+		}
+		return
+	}
+
+	http.Redirect(w, r, "/links/"+id, http.StatusSeeOther)
 }
 
 func (app *application) signupView(w http.ResponseWriter, r *http.Request) {
@@ -206,7 +284,7 @@ func (app *application) signupView(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) signup(w http.ResponseWriter, r *http.Request) {
-	formValues, err := decodePostForm(r)
+	formValues, err := decodeForm(r)
 	if err != nil {
 		app.clientError(w, http.StatusBadRequest)
 		return
@@ -256,7 +334,7 @@ func (app *application) loginView(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) login(w http.ResponseWriter, r *http.Request) {
-	formValues, err := decodePostForm(r)
+	formValues, err := decodeForm(r)
 	if err != nil {
 		app.clientError(w, http.StatusBadRequest)
 		return
