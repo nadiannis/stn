@@ -16,7 +16,10 @@
         <p>{{.Link.URL}}</p>
       </a>
       <div class="actions">
-        <button class="btn btn-solid-light">
+        <button 
+          class="btn btn-solid-light btn-short-link-copy" 
+          data-short-link="{{.Origin.proto}}{{.Origin.host}}/{{.Link.BackHalf}}"
+        >
           <i data-lucide="copy" class="icon-16px"></i>
           Copy short link
         </button>

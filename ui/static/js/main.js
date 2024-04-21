@@ -26,3 +26,14 @@ const deleteLink = async (id) => {
     console.log(error);
   }
 };
+
+const copyShortLink = (e) => {
+  const copyButton = e.target;
+  const shortLink = copyButton.dataset.shortLink;
+  navigator.clipboard.writeText(shortLink);
+
+  copyButton.classList.add('copied');
+  setTimeout(() => {
+    copyButton.classList.remove('copied');
+  }, 1500);
+};
