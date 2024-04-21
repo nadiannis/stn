@@ -20,6 +20,11 @@ type Link struct {
 	UpdatedAt   time.Time
 }
 
+type Summary struct {
+	TotalLinks       int64
+	TotalEngagements int64
+}
+
 type LinkModel struct {
 	DB *sql.DB
 }
@@ -164,4 +169,16 @@ func (m *LinkModel) Delete(id string) error {
 	stmt := "DELETE FROM links WHERE id = ?"
 	_, err := m.DB.Exec(stmt, id)
 	return err
+}
+
+func (m *LinkModel) GetSummaryByUserID(userID string) (*Summary, error) {
+	summary := &Summary{}
+
+	stmt := "SELECT COUNT(id), SUM(engagements) FROM links WHERE user_id = ?"
+	err := m.DB.QueryRow(stmt, userID).Scan(&summary.TotalLinks, &summary.TotalEngagements)
+	if err != nil {
+		return nil, err
+	}
+
+	return summary, nil
 }

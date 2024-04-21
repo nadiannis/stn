@@ -18,6 +18,7 @@ type templateData struct {
 	Origin            map[string]string
 	Link              *models.Link
 	Links             []*models.Link
+	Summary           *models.Summary
 }
 
 func formatDate(t time.Time) string {

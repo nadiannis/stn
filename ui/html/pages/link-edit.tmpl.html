@@ -52,11 +52,15 @@
       <div class="side-info">
         <div class="side-info-item">
           Total Links
-          <span class="side-info-value">5 short links</span>
+          {{with .Summary.TotalLinks}}
+            <span class="side-info-value">{{.}} short links</span>
+          {{end}}
         </div>
         <div class="side-info-item">
           Total Engagements
-          <span class="side-info-value">58 clicks</span>
+          {{with .Summary.TotalEngagements}}
+            <span class="side-info-value">{{.}} clicks</span>
+          {{end}}
         </div>
       </div>
     </aside>

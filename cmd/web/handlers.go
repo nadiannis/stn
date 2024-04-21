@@ -63,14 +63,30 @@ func (app *application) linkListView(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	summary, err := app.links.GetSummaryByUserID(userID)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
 	data := app.newTemplateData(r)
 	data.Links = links
+	data.Summary = summary
 	app.render(w, http.StatusOK, "link-list.tmpl.html", data)
 }
 
 func (app *application) linkCreateView(w http.ResponseWriter, r *http.Request) {
+	userID := app.getAuthenticatedUser(r).ID
+
+	summary, err := app.links.GetSummaryByUserID(userID)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
 	data := app.newTemplateData(r)
 	data.Form = linkForm{}
+	data.Summary = summary
 	app.render(w, http.StatusOK, "link-create.tmpl.html", data)
 }
 
@@ -224,8 +240,15 @@ func (app *application) linkEditView(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	summary, err := app.links.GetSummaryByUserID(userID)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
 	data := app.newTemplateData(r)
 	data.Link = link
+	data.Summary = summary
 	app.render(w, http.StatusOK, "link-edit.tmpl.html", data)
 }
 
