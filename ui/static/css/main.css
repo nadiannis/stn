@@ -97,6 +97,12 @@ input,
   justify-content: center;
   align-items: center;
   gap: 0.25rem;
+  transition: opacity ease 250ms;
+}
+
+.btn:hover,
+.btn:active {
+  opacity: 0.8;
 }
 
 a.btn {
@@ -742,10 +748,14 @@ footer {
   position: relative;
 }
 
+.btn-short-link-copy:hover {
+  opacity: 1;
+}
+
 .btn-short-link-copy::before {
   content: 'Copied!';
-  background: var(--color-gray);
-  color: var(--color-white);
+  background: var(--color-black);
+  color: var(--color-gray-lighter);
   padding: 0.5rem 0.625rem;
   border-radius: 100px;
   font-size: 0.75rem;
@@ -760,8 +770,7 @@ footer {
 
 .btn-short-link-copy::after {
   content: '';
-  background: var(--color-gray);
-  color: var(--color-white);
+  background: var(--color-black);
   width: 10px;
   height: 10px;
   position: absolute;
