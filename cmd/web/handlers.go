@@ -45,6 +45,12 @@ func (app *application) linkRedirect(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	err = app.links.UpdateEngagements(link.ID.String(), int(link.Engagements)+1)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
 	http.Redirect(w, r, link.URL, http.StatusFound)
 }
 

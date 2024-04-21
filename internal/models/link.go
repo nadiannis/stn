@@ -150,6 +150,16 @@ func (m *LinkModel) Update(id, url, backHalf string) error {
 	return nil
 }
 
+func (m *LinkModel) UpdateEngagements(id string, engagements int) error {
+	stmt := "UPDATE links SET engagements = ? WHERE id = ?"
+	_, err := m.DB.Exec(stmt, engagements, id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (m *LinkModel) Delete(id string) error {
 	stmt := "DELETE FROM links WHERE id = ?"
 	_, err := m.DB.Exec(stmt, id)
