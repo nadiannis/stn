@@ -641,6 +641,35 @@ footer {
   gap: 1rem;
 }
 
+.link-list-empty {
+  padding: 1rem 0;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  max-width: 412px;
+  margin: 0 auto;
+}
+
+.link-list-empty .img-container {
+  max-width: 260px;
+}
+
+.link-list-empty .img-container img {
+  width: 100%;
+  height: 100%;
+}
+
+.link-list-empty h3 {
+  font-size: 1.5rem;
+}
+
+.link-list-empty a {
+  color: var(--color-accent);
+  font-weight: 800;
+}
+
 .link-item {
   background: var(--color-white);
   padding: 1.4rem 1rem;

@@ -55,6 +55,16 @@
             </div>
           </div>
         </div>
+        {{else}}
+        <div class="link-list-empty">
+          <div class="img-container">
+            <img src="/static/img/not-found.svg" alt="Not found">
+          </div>
+          <h3>There are no links available</h3>
+          <p>
+            You haven't shortened any links with your account. Start shortening a long link <a href="/links/create">here</a>.
+          </p>
+        </div>
         {{end}}
       </div>
     </div>

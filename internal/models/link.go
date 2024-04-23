@@ -174,7 +174,7 @@ func (m *LinkModel) Delete(id string) error {
 func (m *LinkModel) GetSummaryByUserID(userID string) (*Summary, error) {
 	summary := &Summary{}
 
-	stmt := "SELECT COUNT(id), SUM(engagements) FROM links WHERE user_id = ?"
+	stmt := "SELECT COUNT(id), COALESCE(SUM(engagements), 0) FROM links WHERE user_id = ?"
 	err := m.DB.QueryRow(stmt, userID).Scan(&summary.TotalLinks, &summary.TotalEngagements)
 	if err != nil {
 		return nil, err
