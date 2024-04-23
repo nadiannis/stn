@@ -114,6 +114,17 @@ func (app *application) linkCreate(w http.ResponseWriter, r *http.Request) {
 		form.CheckField(validator.Matches(form.BackHalf, validator.BackHalfRegex), "backHalf", "Back-half can only contain letters, numbers, & the characters _-")
 	}
 
+	var userID string
+	if user := app.getAuthenticatedUser(r); user != nil {
+		userID = user.ID
+	}
+
+	summary, err := app.links.GetSummaryByUserID(userID)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
 	if !form.Valid() {
 		if from == "home" {
 			w.Header().Set("Content-Type", "application/json")
@@ -127,6 +138,7 @@ func (app *application) linkCreate(w http.ResponseWriter, r *http.Request) {
 
 		data := app.newTemplateData(r)
 		data.Form = form
+		data.Summary = summary
 		app.render(w, http.StatusUnprocessableEntity, from+".tmpl.html", data)
 		return
 	}
@@ -147,11 +159,6 @@ func (app *application) linkCreate(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	var userID string
-	if user := app.getAuthenticatedUser(r); user != nil {
-		userID = user.ID
-	}
-
 	link, err := app.links.Insert(form.URL, form.BackHalf, userID)
 	if err != nil {
 		if errors.Is(err, models.ErrDuplicateBackHalf) {
@@ -169,6 +176,7 @@ func (app *application) linkCreate(w http.ResponseWriter, r *http.Request) {
 
 			data := app.newTemplateData(r)
 			data.Form = form
+			data.Summary = summary
 			app.render(w, http.StatusUnprocessableEntity, from+".tmpl.html", data)
 		} else {
 			app.serverError(w, err)
