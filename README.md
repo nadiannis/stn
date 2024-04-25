@@ -54,6 +54,8 @@ Check out the web app here:
 
 ## Routes
 
+[`^ back to top ^`](#table-of-contents)
+
 | **Method** | **Pattern**     | **Description**                       |
 | ---------- | --------------- | ------------------------------------- |
 | GET        | /users/signup   | Show the sign up page.                |
@@ -74,6 +76,26 @@ Check out the web app here:
 ## Database Schema
 
 [`^ back to top ^`](#table-of-contents)
+
+```mermaid
+erDiagram
+    USER |o--o{ LINK : "shortens"
+    USER {
+        string id PK
+        string email 
+        string password
+        datetime date_joined
+    }
+    LINK {
+        string id PK
+        string url
+        string back_half
+        int engagements
+        string user_id FK
+        datetime created_at
+        datetime updated_at
+    }
+```
 
 ## Tech Stack
 
